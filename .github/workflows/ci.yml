@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Print copier version
+        run: copier -v
+
+      - name: Lint copier configuration file
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: copier.yml
+
+      - name: Run Tests
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          make test
+
+      - name: Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          semantic_version: 19
+          extra_plugins: |
+            @semantic-release/changelog@^6.0.2
+            @semantic-release/git@^10.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

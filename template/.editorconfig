@@ -1,0 +1,20 @@
+; top-most EditorConfig file
+root = true
+
+; Unix-style newlines
+[*]
+end_of_line = LF
+
+[{Makefile,**.mk}]
+# Use tabs for indentation (Makefiles require tabs)
+indent_style = tab
+
+# editorconfig yaml
+[*.{yaml,yml,json}]
+indent_style = space
+indent_size = 2
+
+[*.{md}]
+trim_trailing_whitespace = false
+
+

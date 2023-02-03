@@ -1,0 +1,41 @@
+---
+# Copier configuration file
+# See https://copier.readthedocs.io/en/stable/usage.html
+_min_copier_version: 7.0.0
+_subdirectory: "template"
+
+project_name:
+  type: str
+  help: What is the name of this project?
+  validator: |
+    {% if project_name|length == 0 %}
+      Project name is required
+    {% endif %}
+
+project_description:
+  type: str
+  help: What is the description of this template?
+  validator: |
+    {% if project_description|length == 0 %}
+      Project description is required
+    {% endif %}
+
+docker_registry:
+  type: str
+  help: What is the description of this template?
+  choices: ["dockerhub", "ghcr"]
+
+repo_slug:
+  type: str
+  help: What is the slug of the repository?
+  default: brpaz/{{project_name|lower|replace(' ', '-')}}
+  validator: |
+    {% if gh_repo_slug|length == 0 %}GitHub repo slug is required{% endif %}
+
+    {% set regex = "^[a-zA-Z0-9-_]+\/[a-zA-Z0-9-_]+$" %}
+
+    {% if not gh_repo_slug|regex_replace(regex, "") == "" %}
+      GitHub repo slug must be in the format of "owner/repo"
+    {% endif %}
+_tasks:
+  - "git init"
