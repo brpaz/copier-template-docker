@@ -22,7 +22,7 @@ project_description:
 
 docker_registry:
   type: str
-  help: What is the description of this template?
+  help: What is the docker registry to where you will publish this image?
   choices: ["dockerhub", "ghcr"]
 
 repo_slug:
@@ -30,11 +30,11 @@ repo_slug:
   help: What is the slug of the repository?
   default: brpaz/{{project_name|lower|replace(' ', '-')}}
   validator: |
-    {% if gh_repo_slug|length == 0 %}GitHub repo slug is required{% endif %}
+    {% if repo_slug|length == 0 %}GitHub repo slug is required{% endif %}
 
     {% set regex = "^[a-zA-Z0-9-_]+\/[a-zA-Z0-9-_]+$" %}
 
-    {% if not gh_repo_slug|regex_replace(regex, "") == "" %}
+    {% if not repo_slug|regex_replace(regex, "") == "" %}
       GitHub repo slug must be in the format of "owner/repo"
     {% endif %}
 _tasks:
